@@ -1,0 +1,23 @@
+#2825. Make String a Subsequence Using Cyclic Increments
+
+class Solution {
+    public boolean canMakeSubsequence(String str1, String str2) {
+    //pointer to traverse both  string 
+        int i=0, j=0;
+        int m = str1.length(), n= str2.length();
+    // Loop through both strings while there are characters in str2 to match
+        while(i<m && j<n){
+            char ch1 = str1.charAt(i);
+            char ch2 = str2.charAt(j);
+
+    // Check if the current character of str1 matches the current character of str2
+    // either directly or after a cyclic increment    
+            if(ch1==ch2 || (ch1-'a'+1)%26 +'a'==ch2){
+                //move to next character in str2
+                j++;
+            }
+            i++;   //move to next character in str1
+        }
+            return j==str2.length();
+    }
+}
