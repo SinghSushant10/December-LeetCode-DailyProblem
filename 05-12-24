@@ -1,0 +1,42 @@
+# 2337. Move Pieces to Obtain a String
+
+class Solution {
+    public boolean canChange(String start, String target) {
+        int n = start.length();
+        int i=0, j=0;
+        //traverse both strings with two pointers 
+        while(i<n || j<n){
+            //skip '__' in start 
+            while(i<n && start.charAt(i)=='_'){
+                i++;
+            }
+            //skip '__' in target 
+            while(j<n && target.charAt(j)=='_'){
+                j++;
+            }
+            //If  both pointers reach the end , return true 
+            if(i==n && j==n){
+                return true;
+            }
+            //If one pointer reaches the end but the other doesn't , return false 
+            if(i==n || j==n){
+                return false;
+            }
+            //If characters at i and j are different , return false 
+            if(start.charAt(i)!=target.charAt(j)){
+                return false; 
+            }
+            // check movement constraints for 'L' and 'R'
+            if(start.charAt(i)=='L' && i<j){
+                return false;  //'L' cannot move right
+            }
+            if(start.charAt(i)=='R' && i>j){
+                return false;  // 'R' cannot move left
+            }
+            //move both pointers forward 
+            i++;
+            j++;
+        }
+        return true;
+    }
+}
