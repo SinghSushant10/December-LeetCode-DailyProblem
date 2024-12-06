@@ -1,0 +1,33 @@
+2554. Maximum Number of Integers to Choose From a Range I
+
+class Solution {
+    public int maxCount(int[] banned, int n, int maxSum) {
+         // Use a set to quickly check if a number is banned
+        Set<Integer> bannedSet = new HashSet<>();
+        for (int num : banned) {
+            bannedSet.add(num);
+        }
+
+        int count = 0;
+        int currentSum = 0;
+
+        // Iterate through the range [1, n]
+        for (int i = 1; i <= n; i++) {
+            // Skip if the number is banned
+            if (bannedSet.contains(i)) {
+                continue;
+            }
+
+            // Add the number to the sum if it does not exceed maxSum
+            if (currentSum + i <= maxSum) {
+                currentSum += i;
+                count++;
+            } else {
+                // Stop if adding the number would exceed maxSum
+                break;
+            }
+        }
+
+        return count;
+    }
+}
