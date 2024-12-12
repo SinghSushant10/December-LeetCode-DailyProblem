@@ -1,0 +1,23 @@
+#2558. Take Gifts From the Richest Pile
+
+class Solution {
+    public long pickGifts(int[] gifts, int k) {
+        PriorityQueue<Integer> pq= new PriorityQueue<>((a,b)->b-a);
+        long sum =0; 
+        for(int gift:gifts){
+            sum+=gift;
+            pq.offer(gift);
+        }
+        for(int i=0;i<k;i++){
+            if(pq.isEmpty()) break;
+            int largest = pq.poll();
+            int sq = (int) Math.sqrt(largest);
+             // Subtract the removed value and add back its square root.
+            sum-=(largest-sq);
+            // Add the square root value back into the PriorityQueue.
+            pq.offer(sq);
+
+        }
+        return sum;
+    }
+}
