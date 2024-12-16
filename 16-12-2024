@@ -1,0 +1,28 @@
+3264. Final Array State After K Multiplication Operations I
+
+class Solution {
+    public int[] getFinalState(int[] nums, int k, int multiplier) {
+ // Priority queue (min-heap) to store elements with custom comparator:
+ // - If two elements have the same value, compare their indices (a[1] - b[1]).
+ // - Otherwise, compare the values themselves (a[0] - b[0]).
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->{
+            if(a[0]==b[0]) return a[1]-b[1];
+            else return a[0]-b[0];
+        });
+  // Populate the priority queue with array elements and their indices.
+        for(int i=0;i<nums.length;i++){
+            pq.offer(new int[]{nums[i],i});
+        }
+        while(k>0){
+   // Retrieve and remove the smallest element from the queue.
+            int [] arr = pq.poll();
+            nums[arr[1]] = nums[arr[1]] * multiplier;
+// Reinsert the updated element into the priority queue to maintain the heap property.
+            pq.offer(new int[]{nums[arr[1]],arr[1]});
+            k--;
+        }
+        
+        return nums;
+    }
+}
