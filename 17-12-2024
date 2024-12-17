@@ -1,40 +1,59 @@
-#Aggressive Cows
-You are given an array with unique elements of stalls[], which denote the position of a stall. You are also given an integer k which denotes the number of aggressive cows. Your task is to assign stalls to k cows such that the minimum distance between any two of them is the maximum possible.
+#2182. Construct String With Repeat Limit
 
-Examples :
-
-Input: stalls[] = [1, 2, 4, 8, 9], k = 3
-Output: 3
-Explanation: The first cow can be placed at stalls[0], 
-the second cow can be placed at stalls[2] and 
-the third cow can be placed at stalls[3]. 
-The minimum distance between cows, in this case, is 3, which also is the largest among all possible ways.
-TC:O(nlogn+nlogd)  SC:O(1)
 class Solution {
-    //check if it is possible to place 'k' cows in the stalls 
-    // such that the minimum distance between any two cows is at least 'mid'.
-    static boolean isPossible(int stalls[],int k,int mid,int n){
-        int c=1,prev=stalls[0];
-        for(int i=1;i<n;i++){
-            if(stalls[i]-prev>=mid){
-                c++;
-                prev=stalls[i];
+    public String repeatLimitedString(String s, int repeatLimit) {
+        // Frequency count of characters
+        int[] freq = new int[26];
+        for (char c : s.toCharArray()) {
+            freq[c - 'a']++;
+        }
+
+        //  Max-Heap to maintain the largest available character
+        PriorityQueue<int[]> maxHeap = new PriorityQueue<>((a, b) -> b[0] - a[0]);
+        for (int i = 0; i < 26; i++) {
+            if (freq[i] > 0) {
+                maxHeap.offer(new int[]{i, freq[i]}); // {character, frequency}
             }
         }
-        return c>=k;
-    }
-    public static int aggressiveCows(int[] stalls, int k) {
-        // code here
-        Arrays.sort(stalls);
-        int n=stalls.length,low=0,high=stalls[n-1]-stalls[0],mid,ans=0;
-        while(low<=high){
-            mid=(low+high)/2;
-            if(isPossible(stalls,k,mid,n)){
-                ans=Math.max(ans,mid);
-                low=mid+1;
+
+        StringBuilder result = new StringBuilder();
+
+        while (!maxHeap.isEmpty()) {
+            int[] current = maxHeap.poll();
+            int charIdx = current[0], count = current[1];
+            char currentChar = (char) (charIdx + 'a');
+
+            // Append the current character up to `repeatLimit` times
+            int useCount = Math.min(count, repeatLimit);
+            for (int i = 0; i < useCount; i++) {
+                result.append(currentChar);
             }
-            else high=mid-1;
+
+            // Update the remaining count
+            count -= useCount;
+
+            // If there's still remaining of the current character, handle the next largest character
+            if (count > 0) {
+                if (!maxHeap.isEmpty()) {
+                    int[] next = maxHeap.poll();
+                    int nextCharIdx = next[0], nextCount = next[1];
+                    char nextChar = (char) (nextCharIdx + 'a');
+
+                    // Add one occurrence of the next largest character
+                    result.append(nextChar);
+                    nextCount--;
+
+                    // Re-insert the next character if it has remaining frequency
+                    if (nextCount > 0) {
+                        maxHeap.offer(new int[]{nextCharIdx, nextCount});
+                    }
+
+                    // Re-insert the current character back to the heap
+                    maxHeap.offer(new int[]{charIdx, count});
+                }
+            }
         }
-        return ans;
+
+        return result.toString();
     }
 }
