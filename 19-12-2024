@@ -1,0 +1,22 @@
+769. Max Chunks To Make Sorted
+
+TC:O(n) SC: O(1)
+
+class Solution {
+    public int maxChunksToSorted(int[] arr) {
+        int max=Integer.MIN_VALUE;
+        int n = arr.length;
+        int count=0;
+        for(int i=0;i<n;i++){
+     // Update the maximum value seen so far
+            max=Math.max(max,arr[i]);
+
+     // If the maximum value up to the current index is less than or equal
+            // to the current index, it means we can form a chunk here
+            if(max<i+1){
+                count++;  // increment the chunk count 
+            }
+        }
+        return count;
+    }
+}
