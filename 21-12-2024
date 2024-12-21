@@ -1,0 +1,52 @@
+#2872. Maximum Number of K-Divisible Components
+class Solution {
+    public int maxKDivisibleComponents(int n, int[][] edges, int[] values, int k) {
+        // Create an adjacency list to represent the graph from the edges
+        List<Integer>[] adjList = new ArrayList[n]; 
+        for (int i = 0; i < n; i++) {
+            adjList[i] = new ArrayList<>(); // Initialize each list for each node
+        }
+        // Populate the adjacency list from the given edges
+        for (int[] edge : edges) {
+            int node1 = edge[0];
+            int node2 = edge[1];
+            adjList[node1].add(node2); // Add node2 to the neighbors of node1
+            adjList[node2].add(node1); // Add node1 to the neighbors of node2
+        }
+
+        // Array to keep track of the count of k-divisible components
+        int[] componentCount = new int[1];
+
+        // Start DFS from node 0 with no parent (-1)
+        dfs(0, -1, adjList, values, k, componentCount);
+
+        // Return the count of k-divisible components
+        return componentCount[0];
+    }
+
+    // Depth-first search (DFS) function to calculate k-divisible components
+    long dfs(int currentNode, int parentNode, List<Integer>[] adjList,
+             int[] nodeValues, int k, int[] componentCount) {
+        long sum = 0; // Initialize sum of the current subtree
+
+        // Iterate through the neighbors of the current node
+        for (int neighborNode : adjList[currentNode]) {
+            if (neighborNode != parentNode) { 
+                // Perform DFS on the neighbor node if it is not the parent
+                sum += dfs(neighborNode, currentNode, adjList, nodeValues, k, componentCount);
+            }
+        }
+
+        // Add the value of the current node to the sum
+        sum += nodeValues[currentNode];
+
+        // Check if the sum of this subtree is divisible by k
+        if (sum % k == 0) {
+            componentCount[0]++; // Increment the count of k-divisible components
+            sum = 0; // Reset the sum to 0 as this subtree forms a component
+        }
+
+        // Return the sum to the parent node
+        return sum;
+    }
+}
