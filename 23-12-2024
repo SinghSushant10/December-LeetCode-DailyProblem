@@ -1,0 +1,67 @@
+#2471. Minimum Number of Operations to Sort a Binary Tree by Level
+TC: O(nlogn)   SC:O(n) 
+class Solution {
+    public int minimumOperations(TreeNode root) {
+          // Perform level-order traversal to group nodes by level
+        List<List<Integer>> levels = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            List<Integer> level = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = queue.poll();
+                level.add(node.val);
+                if (node.left != null) queue.offer(node.left);
+                if (node.right != null) queue.offer(node.right);
+            }
+            levels.add(level);
+        }
+
+        // Calculate the total minimum swaps needed
+        int totalSwaps = 0;
+        for (List<Integer> level : levels) {
+            totalSwaps += minSwapsToSort(level);
+        }
+
+        return totalSwaps;
+    }
+
+    // Helper function to calculate the minimum swaps to sort a list
+    private int minSwapsToSort(List<Integer> level) {
+        int n = level.size();
+        int[] arr = level.stream().mapToInt(Integer::intValue).toArray();
+
+        // Create a pair of value and index, then sort by value
+        int[][] valueIndex = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            valueIndex[i][0] = arr[i];
+            valueIndex[i][1] = i;
+        }
+        Arrays.sort(valueIndex, Comparator.comparingInt(a -> a[0]));
+
+        // Track visited nodes and count cycles
+        boolean[] visited = new boolean[n];
+        int swaps = 0;
+
+        for (int i = 0; i < n; i++) {
+            // Skip already visited or correctly placed elements
+            if (visited[i] || valueIndex[i][1] == i) continue;
+
+            // Trace the cycle
+            int cycleLength = 0;
+            int j = i;
+            while (!visited[j]) {
+                visited[j] = true;
+                j = valueIndex[j][1];
+                cycleLength++;
+            }
+
+            // Add the number of swaps for this cycle
+            if (cycleLength > 1) swaps += (cycleLength - 1);
+        }
+
+        return swaps;
+    }
+} 
