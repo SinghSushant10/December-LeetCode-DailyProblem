@@ -24,3 +24,36 @@ class Solution {
         return ans;
     }
 }
+
+
+************************************ DFS Approach **********************************************************
+
+class Solution {
+    public List<Integer> largestValues(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        dfs(root, 0, result);
+        return result;
+    }
+    
+    private void dfs(TreeNode node, int level, List<Integer> result) {
+        if (node == null) return; // Base case: If the node is null, return
+        
+        // If the current level is not yet in the result list, add the node's value
+        if (level == result.size()) {
+            result.add(node.val);
+        } else {
+            // Otherwise, update the maximum value for this level
+            result.set(level, Math.max(result.get(level), node.val));
+        }
+        
+        // Recursively traverse the left and right children
+        dfs(node.left, level + 1, result);
+        dfs(node.right, level + 1, result);
+    }
+}
+
+
+
+
+
+
