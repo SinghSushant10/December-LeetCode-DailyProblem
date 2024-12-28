@@ -1,0 +1,52 @@
+#689. Maximum Sum of 3 Non-Overlapping Subarrays
+class Solution {
+    public int[] maxSumOfThreeSubarrays(int[] nums, int k) {
+        int n = nums.length;
+        int[] windowSum = new int[n - k + 1];
+        int[] left = new int[n - k + 1];
+        int[] right = new int[n - k + 1];
+        int[] result = new int[3];
+        
+        // Step 1: Calculate sliding window sums
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+            if (i >= k) sum -= nums[i - k];
+            if (i >= k - 1) windowSum[i - k + 1] = sum;
+        }
+        
+        // Step 2: Calculate left maximum indices
+        int best = 0;
+        for (int i = 0; i < windowSum.length; i++) {
+            if (windowSum[i] > windowSum[best]) {
+                best = i;
+            }
+            left[i] = best;
+        }
+        
+        // Step 3: Calculate right maximum indices
+        best = windowSum.length - 1;
+        for (int i = windowSum.length - 1; i >= 0; i--) {
+            if (windowSum[i] >= windowSum[best]) {
+                best = i;
+            }
+            right[i] = best;
+        }
+        
+        // Step 4: Find the maximum sum by iterating through middle subarray
+        int maxSum = 0;
+        for (int j = k; j < windowSum.length - k; j++) {
+            int i = left[j - k]; // Left subarray
+            int l = right[j + k]; // Right subarray
+            int total = windowSum[i] + windowSum[j] + windowSum[l];
+            if (total > maxSum) {
+                maxSum = total;
+                result[0] = i;
+                result[1] = j;
+                result[2] = l;
+            }
+        }
+        
+        return result;
+    }
+}
